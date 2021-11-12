@@ -15,11 +15,26 @@ public class FlightServer implements IFlightServer {
 
 		// initialize with some flights
 		Flight flight1 = new Flight();
-		
+		flight1.createFlightRandom();
 
 		Flight flight2 = new Flight();
+		flight2.createFlightRandom();
 		
-		// ...
+		Flight flight3 = new Flight();
+		flight3.createFlightRandom();
+		
+		Flight flight4 = new Flight();
+		flight4.createFlightRandom();
+		
+		Flight flight5 = new Flight();
+		flight5.createFlightRandom();
+		
+		Flight flight6 = new Flight();
+		flight6.createFlightRandom();
+		
+		Flight flight7 = new Flight();
+		flight7.createFlightRandom();
+
 	}
 
 	@Override
