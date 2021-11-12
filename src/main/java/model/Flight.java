@@ -1,4 +1,5 @@
 package model;
+import java.io.Serializable;
 import java.lang.Object;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.Random;
 
 import utils.RandomUtil;
 
-public class Flight {
+public class Flight implements Serializable{
 	
 	//Operating Airline
 	private String iata;
