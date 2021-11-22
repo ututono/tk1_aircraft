@@ -16,6 +16,7 @@ repositories {
     jcenter()
 }
 
+
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -23,6 +24,7 @@ java {
 
 dependencies {
     compile 'org.apache.commons:commons-math3:3.6.1'
+    
 }
 
 task runServerApp(type: JavaExec) {
@@ -35,4 +37,16 @@ task runClientApp(type: JavaExec) {
 	classpath = sourceSets.main.runtimeClasspath
 	
 	main = 'FlightClient'
+}
+
+task runClient2App(type:JavaExec){
+	classpath=sourceSets.main.runtimeClasspath
+	
+	main='FlightClient'
+}
+task hello {
+    doLast {
+        println 'Hello world!'
+    }
+    
 }
