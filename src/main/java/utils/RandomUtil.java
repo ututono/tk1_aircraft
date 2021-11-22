@@ -1,6 +1,8 @@
 package utils;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
@@ -57,7 +59,7 @@ public class RandomUtil {
 		return range.charAt(random.nextInt(range.length()));
 	}
 	
-	 public static Date getrandomDate(String beginDate, String endDate) {
+	 public static LocalDateTime getrandomDate(String beginDate, String endDate) {
 	    try {
 	        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 	        Date start = format.parse(beginDate);
@@ -66,7 +68,15 @@ public class RandomUtil {
 	            return null;
 	        }
 	        long date = random(start.getTime(), end.getTime());
-	        return new Date(date);
+	        Date date_converted=new Date(date);
+	        
+	     
+	        //convert Date to LocalDate
+	        LocalDateTime ldt = date_converted.toInstant()
+	                .atZone( ZoneId.systemDefault() )
+	                .toLocalDateTime();
+	        
+	        return ldt;
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }

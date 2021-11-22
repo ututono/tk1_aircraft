@@ -1,13 +1,16 @@
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.print.attribute.standard.PrinterInfo;
 
 import org.junit.jupiter.api.Test;
 
 import model.Flight;
+import utils.DataTransform;
 
 class testcase {
 
@@ -23,7 +26,8 @@ class testcase {
 		}
 	}
 	
-	public static void main(String[] args) {
+	
+	public static void testModify() {
 		int initFlightNum=10;
 		List<Flight> flights=new ArrayList<Flight>();
 		// initialize with some flights
@@ -40,11 +44,23 @@ class testcase {
 		System.out.println("*****************************************************8");
 		flights.remove(flight);
 		printer(flights);
-		
-		
+		System.out.println("*****************************************************8");
+		Flight flight2=new Flight();
+		flight2.createFlightRandom();
+		flights.set(0, flight2);
+		printer(flights);
 		
 		flights.remove(flight);
 
+	}
+	
+	public static void testDateTransform() {
+		String ldtstr="2021-11-05Td22:18:48.424";
+		LocalDateTime ldt=DataTransform.string2LocalDateTime(null);
+		System.out.println("sdafasdf");
+	}
+	public static void main(String[] args) {
+		testDateTransform();
 	}
 	
 
