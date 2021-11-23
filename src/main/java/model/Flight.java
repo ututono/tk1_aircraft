@@ -22,7 +22,7 @@ public class Flight implements Serializable{
 	
 	private String departureAirport;
 	private String arrivalAirport;
-	private Date date; // No determine using type date or string TODO
+	private LocalDateTime originDate; // No determine using type date or string TODO
 	
 
 	private LocalDateTime scheduled_arrival;
@@ -62,16 +62,11 @@ public class Flight implements Serializable{
 		setDepartureAirport(RandomUtil.getRandomUpperletters(3));
 		setArrivalAirport(RandomUtil.getRandomUpperletters(3));
 		
+		setOriginDate(RandomUtil.getrandomDate(beginDate, endDate));
 		setScheduled_arrival(RandomUtil.getrandomDate(beginDate, endDate));
 		setScheduled_dep(RandomUtil.getrandomDate(beginDate, endDate));
 		setEs_arrival(RandomUtil.getrandomDate(beginDate, endDate));
 		setEs_dep(RandomUtil.getrandomDate(beginDate, endDate));
-		
-//		List<String> gates=new ArrayList<>();
-//		for (int i = 0; i <RandomUtil.getRandomNumber(1, 15); i++) {
-//			gates.add(RandomUtil.getNumString(3));
-//		}
-//		setGates(gates);
 		
 		setArrival_terminal(RandomUtil.getNumString(1));
 		setDep_terminal(RandomUtil.getNumString(1));
@@ -81,7 +76,6 @@ public class Flight implements Serializable{
 		setCheckinLocation(RandomUtil.getNumString(1));
 		
 		setCheckinCounter(RandomUtil.getNumString(3)+" - "+RandomUtil.getNumString(3));
-//		setEstimatedDateTime(RandomUtil.getrandomDate(beginDate, endDate));
 		setCheckinStart(RandomUtil.getrandomDate(beginDate, endDate));
 		setCheckinEnd(RandomUtil.getrandomDate(beginDate, endDate));
 		
@@ -126,11 +120,11 @@ public class Flight implements Serializable{
 	public void setArrivalAirport(String arrivalAirport) {
 		this.arrivalAirport = arrivalAirport;
 	}
-	public Date getDate() {
-		return date;
+	public LocalDateTime getOriginDate() {
+		return originDate;
 	}
-	public void setDate(Date date) {
-		this.date = date;
+	public void setOriginDate(LocalDateTime originDate) {
+		this.originDate = originDate;
 	}
 	public String getCheckinLocation() {
 		return checkinLocation;
@@ -236,7 +230,7 @@ public class Flight implements Serializable{
 	@Override
 	public int hashCode() {
 		return Objects.hash(aircraftType, arrivalAirport, arrival_gates, arrival_terminal, checkinCounter, checkinEnd,
-				checkinLocation, checkinStart, date, dep_gates, dep_terminal, departureAirport, es_arrival, es_dep,
+				checkinLocation, checkinStart, originDate, dep_gates, dep_terminal, departureAirport, es_arrival, es_dep,
 				flightNum, flightStatus, iata, name, scheduled_arrival, scheduled_dep);
 	}
 
@@ -254,7 +248,7 @@ public class Flight implements Serializable{
 				&& Objects.equals(arrival_terminal, other.arrival_terminal)
 				&& Objects.equals(checkinCounter, other.checkinCounter) && Objects.equals(checkinEnd, other.checkinEnd)
 				&& Objects.equals(checkinLocation, other.checkinLocation)
-				&& Objects.equals(checkinStart, other.checkinStart) && Objects.equals(date, other.date)
+				&& Objects.equals(checkinStart, other.checkinStart) && Objects.equals(originDate, other.originDate)
 				&& Objects.equals(dep_gates, other.dep_gates) && Objects.equals(dep_terminal, other.dep_terminal)
 				&& Objects.equals(departureAirport, other.departureAirport)
 				&& Objects.equals(es_arrival, other.es_arrival) && Objects.equals(es_dep, other.es_dep)
@@ -280,7 +274,7 @@ public class Flight implements Serializable{
 	@Override
 	public String toString() {
 		return "Flight [iata=" + iata + ", name=" + name + ", aircraftType=" + aircraftType + ", flightNum=" + flightNum
-				+ ", departureAirport=" + departureAirport + ", arrivalAirport=" + arrivalAirport + ", date=" + date
+				+ ", departureAirport=" + departureAirport + ", arrivalAirport=" + arrivalAirport + ", originDate=" + originDate
 				+ ", scheduled_arrival=" + scheduled_arrival + ", scheduled_dep=" + scheduled_dep + ", es_arrival="
 				+ es_arrival + ", es_dep=" + es_dep + ", arrival_terminal=" + arrival_terminal + ", dep_terminal="
 				+ dep_terminal + ", arrival_gates=" + arrival_gates + ", dep_gates=" + dep_gates + ", checkinLocation="

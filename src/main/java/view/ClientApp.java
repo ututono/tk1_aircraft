@@ -336,7 +336,11 @@ public class ClientApp {
 		lblNewLabel_13.setPreferredSize(new Dimension(lBWMAX,IBHMAX));
 		panel_2.add(lblNewLabel_13);
 		
-		status_box = new JComboBox();
+		//initialize combobox
+		String[] statues= {"B","D","I","L","M","S","X","Y","Z"};
+		status_box = new JComboBox(statues);
+		
+		
 		panel_2.add(status_box);
 		
 		panel_3 = new JPanel();
@@ -357,6 +361,8 @@ public class ClientApp {
 			
 		});
 		panel_3.add(btnCancel);
+		
+		
 	}
 
 	

@@ -99,10 +99,6 @@ public class FlightServer implements IFlightServer {
 		if(flights.remove(flight)) {
 			logger.log(Level.INFO, "Delete successfully "+flights.size());
 			informAllClients(flight, true);
-			//TODO delete test print loop
-			for (int i = 0; i < flights.size(); i++) {
-				System.out.println(flights.get(i).toString());
-			}
 			
 		}else {
 			logger.log(Level.WARNING,"No this Flight!!");
@@ -114,7 +110,6 @@ public class FlightServer implements IFlightServer {
 			try {
 				for(int i=0;i<clients.size();i++) {
 					clients.get(i).receiveListOfFlights(flights);
-					System.out.println(clients.get(i).toString());
 				}
 			} catch (RemoteException e) {
 				e.printStackTrace();

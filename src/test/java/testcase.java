@@ -1,4 +1,4 @@
-import static org.junit.jupiter.api.Assertions.*;
+//import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -7,7 +7,7 @@ import java.util.List;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.print.attribute.standard.PrinterInfo;
 
-import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Test;
 
 import model.Flight;
 import utils.DataTransform;

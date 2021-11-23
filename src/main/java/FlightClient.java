@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,7 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 import javax.swing.table.DefaultTableModel;
-
+import javax.swing.text.DateFormatter;
 
 import interfaces.IFlightClient;
 import interfaces.IFlightServer;
@@ -36,8 +37,14 @@ public class FlightClient implements IFlightClient {
 
 	private String clientname;
 	private List<Flight> flights;
+	private final String[] statues= {"B","D","I","L","M","S","X","Y","Z"};
 	FlightsOverview overView;
 
+	
+	/**
+	 * Initialize overview for flights
+	 * @param flights
+	 */
 	public void initView(List<Flight>flights) {
 		EventQueue.invokeLater(new Runnable() {
 		public void run() {
@@ -55,6 +62,7 @@ public class FlightClient implements IFlightClient {
 				JButton deleteButton=overView.getBtnDelete();
 				JButton logoutButton=overView.getBtnlogout();
 				
+				//store a flight as a row data into JTable
 				for(int i=0;i<flights.size();i++) {
 					String[] rows=new String[table.getColumnCount()];
 					
@@ -69,8 +77,8 @@ public class FlightClient implements IFlightClient {
 					defaultTableModel.addRow(rows);
 					
 				}
-				
 				table.setModel(defaultTableModel);
+				
 				modifyButton.addActionListener(new ActionListener() {
 
 					@Override
@@ -80,8 +88,8 @@ public class FlightClient implements IFlightClient {
 							JOptionPane.showMessageDialog(overView.getFrame(), "Please select a flight");
 						}else {
 							initDetailView(flights.get(table.getSelectedRow()));	
-							overView.getFrame().dispose();
-							overView=null;
+							//overView.getFrame().dispose();
+							//overView=null;
 						}
 					}
 					
@@ -119,8 +127,8 @@ public class FlightClient implements IFlightClient {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						initDetailView();	
-						overView.getFrame().dispose();
-						overView=null;
+						//overView.getFrame().dispose();
+						//overView=null;
 
 					}
 					
@@ -156,7 +164,7 @@ public class FlightClient implements IFlightClient {
 	
 	/**
 	 * create and show GUI of flights detail
-	 * To modify a existing flight
+	 * To MODIFY a existing flight
 	 */
 	public void initDetailView(Flight flight) {
 		EventQueue.invokeLater(new Runnable() {
@@ -170,14 +178,17 @@ public class FlightClient implements IFlightClient {
 					window.getTrackNum().setText(flight.getFlightNum());
 					window.getDepAirport().setText(flight.getDepartureAirport());
 					window.getArrAirport().setText(flight.getArrivalAirport());
-					//TODO date
-					//window.getOriginDate()
+
 					LocalDateTime scheduled_arrive=flight.getScheduled_arrival();
 					LocalDateTime scheduled_dep=flight.getScheduled_dep();
 					LocalDateTime es_arrival=flight.getEs_arrival();
 					LocalDateTime es_dep=flight.getEs_dep();
 					LocalDateTime checkinStart=flight.getCheckinStart();
 					LocalDateTime checkinEnd=flight.getCheckinEnd();
+					LocalDateTime originDate=flight.getOriginDate();
+					
+					// Date Format: 2018-11-03
+					window.getOriginDate().setText((DateTimeFormatter.ISO_LOCAL_DATE).format(originDate));
 					
 					window.getScheduled_arrival().setText(flight.getScheduled_arrival().toString());
 					window.getScheduled_Dep().setText(flight.getScheduled_dep().toString());
@@ -190,6 +201,14 @@ public class FlightClient implements IFlightClient {
 					window.getCheckin_loc().setText(flight.getCheckinLocation());
 					window.getCheckin_Counter().setText(flight.getCheckinCounter().toString());
 					
+					//Initialize combobox
+					for (int i = 0; i < statues.length; i++) {
+						if (flight.getFlightStatus()==statues[i].toCharArray()[0]) {
+							window.getStatus_box().setSelectedIndex(i);				
+						}
+					}
+					
+					
 					window.getC_End().setText(flight.getCheckinEnd().toString());
 					window.getC_start().setText(flight.getCheckinStart().toString());
 					
@@ -198,8 +217,6 @@ public class FlightClient implements IFlightClient {
 
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							// TODO Auto-generated method stub
-							initView(flights);
 							window.getFrame().dispose();
 						}
 						
@@ -218,38 +235,43 @@ public class FlightClient implements IFlightClient {
 							flight.setFlightNum(window.getTrackNum().getText());
 							flight.setDepartureAirport(window.getDepAirport().getText());
 							flight.setArrivalAirport(window.getArrAirport().getText());
-							//TODO date scheduled/estimated/checkinstart
-							//window.getOriginDate()
+
 							LocalDateTime tmp;
 							tmp=DataTransform.string2LocalDateTime(window.getScheduled_arrival().getText());
 							if(tmp==null) {
 								flight.setScheduled_arrival(scheduled_arrive);
-								JOptionPane.showMessageDialog(overView.getFrame(), "Enter wrong date format,Please check");
+								JOptionPane.showMessageDialog(overView.getFrame(), "Enter wrong date format in scheduled arrival field,Please check");
 							}else flight.setScheduled_arrival(tmp);
 							tmp=DataTransform.string2LocalDateTime(window.getScheduled_Dep().getText());
 							if(tmp==null) {
 								flight.setScheduled_dep(scheduled_dep);
-								JOptionPane.showMessageDialog(overView.getFrame(), "Enter wrong date format,Please check");
+								JOptionPane.showMessageDialog(overView.getFrame(), "Enter wrong date format in scheuled departure field,Please check");
 							}else flight.setScheduled_dep(tmp);
 							tmp=DataTransform.string2LocalDateTime(window.getEs_Arrival().getText());
 							if(tmp==null) {
 								flight.setEs_arrival(es_arrival);
-								JOptionPane.showMessageDialog(overView.getFrame(), "Enter wrong date format,Please check");
+								JOptionPane.showMessageDialog(overView.getFrame(), "Enter wrong date format in Estimated arrival field,Please check");
 							}else flight.setEs_arrival(tmp);
 							tmp=DataTransform.string2LocalDateTime(window.getEs_Dep().getText());
 							if(tmp==null) {
 								flight.setEs_dep(es_dep);
-								JOptionPane.showMessageDialog(overView.getFrame(), "Enter wrong date format,Please check");
+								JOptionPane.showMessageDialog(overView.getFrame(), "Enter wrong date format in Estimated departure field,Please check");
 							}else flight.setEs_dep(tmp);
 							tmp=DataTransform.string2LocalDateTime(window.getC_start().getText());
 							if(tmp==null) {
 								flight.setCheckinStart(checkinStart);
+								JOptionPane.showMessageDialog(overView.getFrame(), "Enter wrong date format in Checkin Start field,Please check");
 							}else flight.setCheckinStart(tmp);
 							tmp=DataTransform.string2LocalDateTime(window.getC_End().getText());
 							if (tmp==null) {
 								flight.setCheckinEnd(checkinEnd);
-								JOptionPane.showMessageDialog(overView.getFrame(), "Enter wrong date format,Please check");
+								JOptionPane.showMessageDialog(overView.getFrame(), "Enter wrong date format in CheckinEnd field,Please check");
 							}else flight.setCheckinEnd(tmp);
+							tmp=DataTransform.string2LocalDateTime(window.getOriginDate().getText(),DataTransform.ISO_LOCAL_DATE);
+							if (tmp==null) {
+								flight.setOriginDate(originDate);
+								JOptionPane.showMessageDialog(overView.getFrame(), "Enter wrong date format in OriginDate field,Please check");
+							}else flight.setOriginDate(tmp);
 							
 							flight.setCheckinCounter(window.getCheckin_Counter().getText());
 							flight.setArrival_terminal(window.getArrival_terminal().getText());
@@ -257,6 +279,7 @@ public class FlightClient implements IFlightClient {
 							flight.setArrival_gates(window.getArrvial_Gates().getText());
 							flight.setDep_gates(window.getDep_Gates().getText());
 							flight.setCheckinLocation(window.getCheckin_loc().getText());
+							flight.setFlightStatus(statues[window.getStatus_box().getSelectedIndex()].toCharArray()[0]);
 							
 							
 							
@@ -310,6 +333,7 @@ public class FlightClient implements IFlightClient {
 					ClientApp window = new ClientApp();
 					window.getFrame().setVisible(true);
 					window.getIata().setEditable(true);
+					window.getTrackNum().setEditable(true);
 					window.getAirModelName().setEditable(true);
 					JButton applyButton=window.getBtnApply();
 					JButton cancelButton=window.getBtnCancel();
@@ -318,7 +342,7 @@ public class FlightClient implements IFlightClient {
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							// TODO Auto-generated method stub
-							initView(flights);
+							//initView(flights);
 							window.getFrame().dispose();
 						}
 						
@@ -452,7 +476,7 @@ public class FlightClient implements IFlightClient {
 	public void receiveListOfFlights(List<Flight> flights) {
 		logger.log(Level.INFO, "List of flights received: " + flights.size());
 		if (overView==null) {
-			// create and show GUI
+			// create and show GUI if overview windows is closed
 			initView(flights);			
 		}else {
 			
@@ -486,14 +510,7 @@ public class FlightClient implements IFlightClient {
 
 	
 	public void startup() {
-		initLoginView();
-
-		
-		// register the client on RMI server
-		
-		
-             	
-		
+		initLoginView();		
 	}
 	
 	
