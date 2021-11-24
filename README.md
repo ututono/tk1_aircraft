@@ -1,5 +1,28 @@
 # Virtual TK1 Airport
+#### Contributor
+<table>
+   <tr>
+      <td>Group</td>
+      <td colspan="2">22</td>
 
+   </tr>
+   <tr>
+      <td>Authors</td>
+      <td>Zhuo Yu</td>
+      <td>Kexin Wang</td>
+   </tr>
+   <tr>
+      <td>TU-ID</td>
+      <td>2752408</td>
+      <td>2540047</td>
+   </tr>
+   <tr>
+      <td>Date</td>
+      <td colspan="2">24.11.2021</td>
+   </tr>
+</table>
+
+#### Manual
 In order to run the application, kindly follow the below steps:
 
 1) Extract the ZIP file
@@ -32,6 +55,6 @@ Port 10999 is already in use.
 
 
 ###### Solution:
-Kill all tasks named java* as follow 
+Kill all tasks named `java*` as follow 
 
 ![Taskmgr_J3YreCqYrv.png](https://i.loli.net/2021/11/23/5PHKvFGic3yBxLn.png)
