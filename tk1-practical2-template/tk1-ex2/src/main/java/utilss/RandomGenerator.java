@@ -1,8 +1,11 @@
 package utilss;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
@@ -58,7 +61,7 @@ public class RandomGenerator {
 		return range.charAt(random.nextInt(range.length()));
 	}
 	
-	 public static LocalDateTime getrandomDate(String beginDate, String endDate) {
+	public static LocalDateTime getrandomDate(String beginDate, String endDate) {
 	    try {
 	        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 	        Date start = format.parse(beginDate);
@@ -83,13 +86,65 @@ public class RandomGenerator {
 	   
 	 }
 	 
-	 public static long random(long begin, long end) {
+	public static long random(long begin, long end) {
 	    long rtn = begin + (long) (Math.random() * (end - begin));
 	    if (rtn == begin || rtn == end) {
 	        return random(begin, end);
 	    }
 	    return rtn;
 	}
+	 
+	 /**
+	  * To return a period. E.g., input("2021-11-2",3) 
+	  * Output: ["2021-11-2","2021-11-3","2021-11-4"]
+	  * @param beginDate
+	  * @param daysnum
+	  * @return
+	  */
+	 public static ArrayList<Date> getCohDays(String beginDate,int daysnum){
+		 ArrayList<Date> days=new ArrayList<Date>();
+		 SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+		 Date date;
+		try {
+			date = format.parse(beginDate);
+			Calendar calendar=Calendar.getInstance();
+			calendar.setTime(date);
+			days.add(date);
+			for (int i = 1; i < daysnum; i++) {
+				calendar.add(Calendar.DATE, 1);
+				days.add(calendar.getTime());
+			}
+			return days;
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}	
+	}
+	
+	 public static LocalDateTime getTimeOnDay(Date date) {
+			Calendar calendar=Calendar.getInstance();
+			calendar.setTime(date);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			Date morning=calendar.getTime();
+			calendar.add(Calendar.DATE, 1);
+			Date evening=calendar.getTime();
+			long time = random(morning.getTime(), evening.getTime());
+			Date date_converted=new Date(time);
+	        
+		     
+	        //convert Date to LocalDate
+	        LocalDateTime ldt = date_converted.toInstant()
+	                .atZone( ZoneId.systemDefault() )
+	                .toLocalDateTime();
+			return ldt;
+		
+		 
+	}
+	 
 	 
 	 
 	   

@@ -6,6 +6,7 @@ package controllerImpl;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -17,25 +18,37 @@ import model.Ticket;
 
 /**
  * @author ututono
- *
+ * CartManager depends on user, i.e. each user owns a cartmanger.
  */
 public class CartManagerImpl implements CartManager {
 
 	private ShoppingCart cart;
-	private LinkedList<Ticket> tickets;
-	private ArrayList<String> destinations;
-	private ArrayList<Integer> pricebase;
+	private ArrayList<Ticket> tickets;
+	
+	//TODO: destination and pricebase to be editable
+	public ArrayList<String> destinations;
+	public ArrayList<Integer> pricebase;
 	
 	public CartManagerImpl(ShoppingCart cart) {
 		this.cart=cart;
-		tickets=new LinkedList<Ticket>();
-		destinations=new ArrayList<String>(Arrays.asList("NewYork","Tokyo","Berlin"));
-		pricebase=new ArrayList<Integer>(Arrays.asList(300,60,5000));
+		tickets=new ArrayList<Ticket>();
 	}
+	
+	
+		
 	@Override
 	public boolean addtoCart(Reservation reservation) {
 		try {
 			LinkedList<Reservation> reservationsList=cart.getReservationsOrder();
+			
+			// Check whether the reservation (same flight) existed in the cart.
+			for (Iterator iterator = reservationsList.iterator(); iterator.hasNext();) {
+				Reservation res = (Reservation) iterator.next();
+				if (res.getFlightnumber().equals(reservation.getFlightnumber())
+						&& res.getFlightdate().equals(reservation.getFlightdate())) {
+					return true;
+				}
+			}
 			reservationsList.add(reservation);
 			return true;
 		} catch (Exception e) {
@@ -92,12 +105,41 @@ public class CartManagerImpl implements CartManager {
 		return price;
 	}
 	
-	public LinkedList<Ticket> getTickets() {
+	public ArrayList<Ticket> getTickets() {
 		return tickets;
 	}
 	@Override
 	public void deleteAll() {
 		cart.getReservationsOrder().clear();
 	}
+
+
+
+	public ArrayList<String> getDestinations() {
+		return destinations;
+	}
+
+
+
+	public void setDestinations(ArrayList<String> destinations) {
+		this.destinations = destinations;
+	}
+
+
+
+	public ArrayList<Integer> getPricebase() {
+		return pricebase;
+	}
+
+
+
+	public void setPricebase(ArrayList<Integer> pricebase) {
+		this.pricebase = pricebase;
+	}
+
+
+	
+	
+	
 
 }

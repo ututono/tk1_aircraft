@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 public class EmbraerE170 extends Flight {
 	private static final int ROWSUM = 24;
-	private static final String FLIGHTYPE="EmbraerE170";
+	public static final String FLIGHTYPE="EmbraerE170";
 	
 	public EmbraerE170(String type,String destination, String flightnumber, LocalDateTime departuretimel) {
 		super(type,destination,flightnumber,departuretimel);

@@ -3,10 +3,13 @@
  */
 package model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * @author ututono
  *
  */
+@XmlRootElement
 public class Seat {
 	// Example A - F
 	private String seatnumber;
@@ -41,6 +44,10 @@ public class Seat {
 		this.type = type;
 	}
 
+	/**
+	 * 
+	 * @return true: free; false: reserved
+	 */
 	public boolean isStatus() {
 		return status;
 	}
@@ -63,6 +70,12 @@ public class Seat {
 		}else {
 			return false;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "Seat [seatnumber=" + seatnumber + ", type=" + type + ", status=" + status + ", isermengency="
+				+ isermengency + "]";
 	}
 	
 	

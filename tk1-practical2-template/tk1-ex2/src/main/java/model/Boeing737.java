@@ -8,7 +8,7 @@ import java.util.LinkedList;
 public class Boeing737 extends Flight {
 
 	private static final int ROWSUM = 39;
-	private static final String FLIGHTYPE="Boeing737";
+	public static final String FLIGHTYPE="Boeing737";
 	
 	public Boeing737() {
 		super();

@@ -18,8 +18,12 @@ public interface CartManager {
 	 */
 	public LinkedList<Reservation> buynow();
 	
-	public LinkedList<Ticket> getTickets();
+	public ArrayList<Ticket> getTickets();
 	
 	public void deleteAll();
+	
+	public void setDestinations(ArrayList<String> destinations);
+	
+	public void setPricebase(ArrayList<Integer> pricebase);
 
 }

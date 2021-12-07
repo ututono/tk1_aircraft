@@ -3,11 +3,17 @@ package model;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Objects;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class ShoppingCart {
 	private User client;
 	private LinkedList<Reservation> reservationsOrder;
 	private LocalDateTime dateofReservation;
+	
+	public ShoppingCart() {
+		// TODO Auto-generated constructor stub
+	}
 	
 	public ShoppingCart(User client) {
 		this.client=client;
@@ -57,6 +63,12 @@ public class ShoppingCart {
 		ShoppingCart other = (ShoppingCart) obj;
 		return Objects.equals(client, other.client) && Objects.equals(dateofReservation, other.dateofReservation)
 				&& Objects.equals(reservationsOrder, other.reservationsOrder);
+	}
+
+	@Override
+	public String toString() {
+		return "ShoppingCart [client=" + client + ", reservationsOrder=" + reservationsOrder + ", dateofReservation="
+				+ dateofReservation + "]";
 	}
 	
 	

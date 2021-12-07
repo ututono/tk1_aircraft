@@ -6,6 +6,8 @@ package model;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import controllerImpl.FlightsmanagerImpl;
 import controllerInterface.FlightsManager;
 import utilss.RandomGenerator;
@@ -15,6 +17,7 @@ import utilss.RandomGenerator;
  * This class is to record each order. i.e. what a customer select
  * Main key is {flight number, seat number,data and time of the reserved flight }
  */
+@XmlRootElement
 public class Reservation {
 	private String flightnumber;
 	private Flight flight;
@@ -23,6 +26,9 @@ public class Reservation {
 	private int seatype;
 	private LocalDateTime flightdate;
 	private String meal;
+	
+	public Reservation() {
+	}
 	
 	public Reservation(Flight flight,int row,String seatnum) {
 		this.flightnumber=flight.getFlightnumber();
@@ -115,6 +121,15 @@ public class Reservation {
 
 	public void setSeatype(int seatype) {
 		this.seatype = seatype;
+	}
+
+
+
+	@Override
+	public String toString() {
+		return "Reservation [flightnumber=" + flightnumber + ", flight=" + flight + ", seatRow=" + seatRow
+				+ ", seatNum=" + seatNum + ", seatype=" + seatype + ", flightdate=" + flightdate + ", meal=" + meal
+				+ "]";
 	}
 	
 	

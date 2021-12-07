@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Objects;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.apache.commons.math3.ml.neuralnet.twod.util.HitHistogram;
 import utilss.*;
 
@@ -16,6 +18,7 @@ import utilss.*;
  * Main key is {flight type}
  *
  */
+@XmlRootElement
 public class Flight {
 	
 	private String flightType;
@@ -119,8 +122,6 @@ public class Flight {
 		this.departuretime = departuretime;
 	}
 
-
-	
 	@Override
 	public int hashCode() {
 		return Objects.hash(departuretime, destination, flightType, flightnumber, rowsum, seats);
@@ -137,8 +138,18 @@ public class Flight {
 		Flight other = (Flight) obj;
 		return Objects.equals(departuretime, other.departuretime) && Objects.equals(destination, other.destination)
 				&& Objects.equals(flightType, other.flightType) && Objects.equals(flightnumber, other.flightnumber)
-				&& rowsum == other.rowsum;
+				&& rowsum == other.rowsum && Objects.equals(seats, other.seats);
 	}
+
+	@Override
+	public String toString() {
+		return "Flight [flightType=" + flightType + ", destination=" + destination + ", flightnumber=" + flightnumber
+				+ ", departuretime=" + departuretime + ", seats=" + seats + ", rowsum=" + rowsum + "]";
+	}
+
+
+	
+
 
 	
 

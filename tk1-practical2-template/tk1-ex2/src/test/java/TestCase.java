@@ -2,8 +2,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 
-import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import controllerImpl.BookingServiceImpl;
@@ -12,6 +12,7 @@ import controllerImpl.FlightsmanagerImpl;
 import controllerInterface.BookingServcie;
 import controllerInterface.CartManager;
 import controllerInterface.FlightsManager;
+import model.AirBus319;
 import model.Flight;
 import model.Reservation;
 import model.ShoppingCart;
@@ -75,45 +76,49 @@ public void reserverandflightTest() {
  * Reserve
  * Get Ticket
  */
-@Test
-public void cartTest() {
-	User client=new User("ututono", 18);
-	ArrayList<Flight> flights=BookingServcie.initFlights(3);
-	Flight flight=flights.get(0);
-	BookingServcie bookingServcie=new BookingServiceImpl(client);
-	bookingServcie.addtoCart(flight, 0, "A");
+//@Test
+//public void cartTest() {
+//	User client=new User("ututono", 18);
+//	ArrayList<Flight> flights=BookingServcie.initFlights(3);
+//	Flight flight=flights.get(0);
+//	BookingServcie bookingServcie=new BookingServiceImpl(client);
+//	bookingServcie.addtoCart(flight, 0, "A");
+//
+//	
+//	Reservation res=new Reservation(flight, 0, "A");
+//	ShoppingCart testCart=new ShoppingCart(client);
+//	CartManager cartManager=new CartManagerImpl(testCart);
+//	cartManager.addtoCart(res);
+//
+//	
+//	assertEquals(testCart, bookingServcie.getCart());
+//	
+//	bookingServcie.reserve();
+//	FlightsManager flightsManager=new FlightsmanagerImpl(flight);
+//	
+//	
+//	assertFalse(flightsManager.reserve(0, "A"));
+//}
+//
+//@Test
+//public void oneUser4onePlaneTest() {
+//	User client=new User("ututono", 18);
+//	ArrayList<Flight> flights=BookingServcie.initFlights(3);
+//	Flight flight=flights.get(0);
+//	Flight flight2=flights.get(1);
+//	
+//	BookingServcie bookingServcie=new BookingServiceImpl(client);
+//	bookingServcie.addtoCart(flight, 0, "A");
+//	bookingServcie.reserve();
+//	assertTrue(bookingServcie.alreadybook(flight, client));
+//	bookingServcie.alreadybook(flight2, client);
+//	assertFalse(bookingServcie.alreadybook(flight2, client));
+//	
+//	
+//}
 
-	
-	Reservation res=new Reservation(flight, 0, "A");
-	ShoppingCart testCart=new ShoppingCart(client);
-	CartManager cartManager=new CartManagerImpl(testCart);
-	cartManager.addtoCart(res);
+public static void main(String[] args) {
 
-	
-	assertEquals(testCart, bookingServcie.getCart());
-	
-	bookingServcie.reserve();
-	FlightsManager flightsManager=new FlightsmanagerImpl(flight);
-	
-	
-	assertFalse(flightsManager.reserve(0, "A"));
-}
-
-@Test
-public void oneUser4onePlaneTest() {
-	User client=new User("ututono", 18);
-	ArrayList<Flight> flights=BookingServcie.initFlights(3);
-	Flight flight=flights.get(0);
-	Flight flight2=flights.get(1);
-	
-	BookingServcie bookingServcie=new BookingServiceImpl(client);
-	bookingServcie.addtoCart(flight, 0, "A");
-	bookingServcie.reserve();
-	assertTrue(bookingServcie.alreadybook(flight, client));
-	bookingServcie.alreadybook(flight2, client);
-	assertFalse(bookingServcie.alreadybook(flight2, client));
-	
-	
 }
 
 

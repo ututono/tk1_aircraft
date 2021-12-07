@@ -3,6 +3,9 @@ package model;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class Ticket {
 	private String ticketID;
 	private String clientname;
@@ -50,6 +53,13 @@ public class Ticket {
 	private void setDateofticket(LocalDateTime dateofticket) {
 		this.dateofticket = dateofticket;
 	}
+
+	@Override
+	public String toString() {
+		return "Ticket [ticketID=" + ticketID + ", clientname=" + clientname + ", reservation=" + reservation
+				+ ", price=" + price + ", dateofticket=" + dateofticket + "]";
+	}
+	
 	
 	
 }

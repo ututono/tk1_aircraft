@@ -1,9 +1,17 @@
 package model;
 
+/**
+ * @author ZhuoY
+ *
+ */
 public class User {
 	
 	private String username;
 	private int age;
+	
+	public User() {
+		// TODO Auto-generated constructor stub
+	}
 	
 	public User(String username, int age) {
 		this.username=username;
@@ -25,6 +33,12 @@ public class User {
 	public void setAge(int age) {
 		this.age = age;
 	}
+
+	@Override
+	public String toString() {
+		return "User [username=" + username + ", age=" + age + "]";
+	}
+	
 	
 
 }

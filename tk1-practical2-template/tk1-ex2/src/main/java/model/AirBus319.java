@@ -6,7 +6,7 @@ import java.util.LinkedList;
 public class AirBus319 extends Flight {
 
 	private static final int ROWSUM = 35;
-	private static final String FLIGHTYPE="AirBus319";
+	public static final String FLIGHTYPE="AirBus319";
 	
 	public AirBus319(String type,String destination, String flightnumber, LocalDateTime departuretimel) {
 		super(type,destination,flightnumber,departuretimel);
