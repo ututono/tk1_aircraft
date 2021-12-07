@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -59,6 +60,26 @@ public class Ticket {
 		return "Ticket [ticketID=" + ticketID + ", clientname=" + clientname + ", reservation=" + reservation
 				+ ", price=" + price + ", dateofticket=" + dateofticket + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(clientname, dateofticket, price, reservation, ticketID);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Ticket other = (Ticket) obj;
+		return Objects.equals(clientname, other.clientname) && Objects.equals(dateofticket, other.dateofticket)
+				&& Float.floatToIntBits(price) == Float.floatToIntBits(other.price)
+				&& Objects.equals(reservation, other.reservation) && Objects.equals(ticketID, other.ticketID);
+	}
+	
 	
 	
 	

@@ -1,6 +1,7 @@
 package clients;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 
 import model.Flight;
@@ -21,6 +22,16 @@ public interface ClientInterface {
 	void startup();
 	
 	ArrayList<Ticket> getTicket();
+	
+	ArrayList<String> getDestinations();
+	
+	ArrayList<Date> getDates();
+	
+	void initCustomerConfigView();
+	
+	void initFlightSectView(String destination, Date date);
+	
+	void initSeatBookingView(Flight flight);
 	
 	
 }

@@ -1,11 +1,19 @@
 package utilss;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
+import java.util.LinkedList;
+
+import model.Seat;
 
 public class Transformer {
 	/**
@@ -94,4 +102,49 @@ public class Transformer {
 			return null;
 		}
 	}
+	
+	public static Date stringToDate(String str) {
+		try {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			Date date=(Date) format.parse(str);
+			return date;
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
+				
+	}
+	
+	  public static byte[] serialize(LinkedList<LinkedList<Seat>> object) {
+		    byte[] bytes=null;
+		    ByteArrayOutputStream bos=new ByteArrayOutputStream();
+		    try{
+		      ObjectOutputStream oos=new ObjectOutputStream(bos);
+		      oos.writeObject(object);
+		      oos.flush();
+		      bytes=bos.toByteArray();
+		      oos.close();
+		      bos.close();
+		    }catch (IOException ex){
+		      ex.printStackTrace();
+		    }
+		    return bytes;
+		  }
+	  
+	  
+	  public static LinkedList<LinkedList<Seat>> deserialize(byte[] data) {
+		    Object obj=null;
+		    try{
+		      ByteArrayInputStream bis=new ByteArrayInputStream(data);
+		      ObjectInputStream ois=new ObjectInputStream(bis);
+		      obj=ois.readObject();
+		      ois.close();
+		      bis.close();
+		    }catch (IOException ex){
+		      ex.printStackTrace();
+		    }catch (ClassNotFoundException ex){
+		      ex.printStackTrace();
+		    }
+		    return (LinkedList<LinkedList<Seat>>) obj;
+		  }
 }

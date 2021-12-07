@@ -3,6 +3,9 @@
  */
 package model;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -10,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  */
 @XmlRootElement
-public class Seat {
+public class Seat implements Serializable{
 	// Example A - F
 	private String seatnumber;
 	private int type;
@@ -77,6 +80,26 @@ public class Seat {
 		return "Seat [seatnumber=" + seatnumber + ", type=" + type + ", status=" + status + ", isermengency="
 				+ isermengency + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(isermengency, seatnumber, status, type);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Seat other = (Seat) obj;
+		return isermengency == other.isermengency && Objects.equals(seatnumber, other.seatnumber)
+				&& status == other.status && type == other.type;
+	}
+	
+	
 	
 	
 

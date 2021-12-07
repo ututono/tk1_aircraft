@@ -3,8 +3,8 @@ package soap;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,9 +13,11 @@ import javax.jws.WebService;
 import controllerImpl.BookingServiceImpl;
 import controllerInterface.BookingServcie;
 import model.Flight;
+import model.Seat;
 import model.ShoppingCart;
 import model.Ticket;
 import model.User;
+import utilss.Transformer;
 
 //Service Implementation
 @WebService(endpointInterface = "soap.ReservationBookingServiceInterface")
@@ -88,6 +90,32 @@ public class ReservationBookingServiceImpl implements ReservationBookingServiceI
 	@Override
 	public ArrayList<Flight> getFlightsOnDayandDest(String destination, Date date) {
 		return bookingServcie.getFlightsOnDayandDest(destination, date);
+	}
+
+	@Override
+	public HashMap<String, ArrayList<ArrayList<Seat>>> getSeats() {
+		ArrayList<Flight> flights=bookingServcie.getAllFlights();
+		HashMap<String, ArrayList<ArrayList<Seat>>> seatsMap=
+				new HashMap<String, ArrayList<ArrayList<Seat>>>();
+		for (Iterator iterator = flights.iterator(); iterator.hasNext();) {
+			Flight flight = (Flight) iterator.next();
+			seatsMap.put(flight.getFlightnumber(), flight.getSeats());
+		}
+		return seatsMap;
+	}
+
+	
+	
+	@Override
+	public ArrayList<ArrayList<Seat>> getSeatsFromFlight(String flightnum) {
+		ArrayList<Flight> flights=bookingServcie.getAllFlights();
+		for (Iterator iterator = flights.iterator(); iterator.hasNext();) {
+			Flight flight = (Flight) iterator.next();
+			if (flight.getFlightnumber().equals(flightnum)) {
+				return flight.getSeats();
+			}
+		}
+		return null;
 	}
 	
 //

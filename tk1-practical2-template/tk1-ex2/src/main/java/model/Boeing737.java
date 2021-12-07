@@ -3,7 +3,7 @@ package model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class Boeing737 extends Flight {
 
@@ -23,13 +23,13 @@ public class Boeing737 extends Flight {
 	}
 
 	public void init() {
-		LinkedList<Seat> row=new LinkedList<Seat>();
+		ArrayList<Seat> row=new ArrayList<Seat>();
 		
 		// United First Seat
 		// row 1-5; A-B E-F
 		String[] seatnumbers_F={"A","B","E","F"};
 		for (int i = 0; i < 5; i++) {
-			row=new LinkedList<Seat>();
+			row=new ArrayList<Seat>();
 			for(int j=0;j<seatnumbers_F.length;j++) {
 				Seat seat=new Seat();
 				seat.init(seatnumbers_F[j], super.getFirstclass(), false);
@@ -39,7 +39,7 @@ public class Boeing737 extends Flight {
 		}
 		
 		// Empty row no.6
-		row=new LinkedList<Seat>();
+		row=new ArrayList<Seat>();
 		super.addSeats(row);
 		
 		// Economy Plus
@@ -52,7 +52,7 @@ public class Boeing737 extends Flight {
 		}
 		super.addSeats(row);
 		for (int i = 0; i < 4; i++) {
-			row=new LinkedList<Seat>();
+			row=new ArrayList<Seat>();
 			for(int j=0;j<seatnumbers_E.length;j++) {
 				Seat seat=new Seat();
 				seat.init(seatnumbers_E[j], super.getEconplus(), false);
@@ -60,7 +60,7 @@ public class Boeing737 extends Flight {
 			}
 			super.addSeats(row);
 		}
-		row=new LinkedList<Seat>();
+		row=new ArrayList<Seat>();
 		for (int i = 0; i < 3; i++) {
 			Seat seat=new Seat();
 			seat.init(seatnumbers_E[i], super.getEconplus(), false);
@@ -71,7 +71,7 @@ public class Boeing737 extends Flight {
 		
 		//Economy Class
 		// From 12D to the whole 15
-		row=new LinkedList<Seat>();
+		row=new ArrayList<Seat>();
 		for (int i = 3; i < 3; i++) {
 			Seat seat=new Seat();
 			seat.init(seatnumbers_E[i], super.getEconplus(), false);
@@ -80,7 +80,7 @@ public class Boeing737 extends Flight {
 		super.addSeats(row);
 		
 		for (int i = 0; i < 2; i++) {
-			row=new LinkedList<Seat>();
+			row=new ArrayList<Seat>();
 			for(int j=0;j<seatnumbers_E.length;j++) {
 				Seat seat=new Seat();
 				seat.init(seatnumbers_E[j], super.getEconomypclass(), false);
@@ -92,7 +92,7 @@ public class Boeing737 extends Flight {
 		// Empty rows from 16-19
 		// TODO: how to identify empty row when show up on the GUI
 		for(int i=0;i<4;i++) {
-			row=new LinkedList<Seat>();
+			row=new ArrayList<Seat>();
 			super.addSeats(row);
 		}
 		
@@ -101,7 +101,7 @@ public class Boeing737 extends Flight {
 		// Exit Row and EP 
 		// From 20A - 21F
 		for (int i = 0; i < 2; i++) {
-			row=new LinkedList<Seat>();
+			row=new ArrayList<Seat>();
 			for(int j=0;j<seatnumbers_E.length;j++) {
 				Seat seat=new Seat();
 				seat.init(seatnumbers_E[j], super.getEconplus(), true);
@@ -113,7 +113,7 @@ public class Boeing737 extends Flight {
 		// Economy Class
 		// From 22A - 39F
 		for (int i = 0; i < 18; i++) {
-			row=new LinkedList<Seat>();
+			row=new ArrayList<Seat>();
 			for(int j=0;j<seatnumbers_E.length;j++) {
 				Seat seat=new Seat();
 				seat.init(seatnumbers_E[j], super.getEconplus(), true);

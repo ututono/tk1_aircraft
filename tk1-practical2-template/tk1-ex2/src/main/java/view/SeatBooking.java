@@ -65,7 +65,7 @@ public class SeatBooking {
 		table.setModel(model);
 		
 	    JScrollPane JSP=  new  JScrollPane(table);
-	    JSP.setBounds(0, 0, 1, 1);
+	    JSP.setBounds(0, 0, 753, 500);
 	    frame.getContentPane().add(JSP);
 		
 		AddCartBtn = new JButton("Add to Cart");

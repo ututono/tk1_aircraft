@@ -31,7 +31,7 @@ public class ClientsMainApp {
 		SoapClient soapClient=new SoapClient(user1);
 		Flight flight=soapClient.getFlightfromServer().get(2);
 //		Flight flight3=soapClient.getFlightfromServer().get(3);
-		System.out.println(flight.toString()+"\n The size of seats is "+ flight.getSeats().size());
+		System.out.println(flight.toString()+"\n The size of seats is "+ flight.getSeats().get(0).size());
 //		ArrayList<Flight> flights=soapClient.getFlightfromServer();
 //		soapClient.addtoCart(user1,flight.getFlightnumber(), 0, "A");
 //		soapClient.addtoCart(user1,flight3.getFlightnumber(), 0, "A");

@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,24 +20,24 @@ import utilss.*;
  *
  */
 @XmlRootElement
-public class Flight {
+public class Flight implements Serializable{
 	
 	private String flightType;
 	private String destination;
 	private String flightnumber;
 	private LocalDateTime departuretime;
-	private LinkedList<LinkedList<Seat>> seats=new LinkedList<LinkedList<Seat>>();
+	private ArrayList<ArrayList<Seat>> seats=new ArrayList<ArrayList<Seat>>();
 	private int rowsum;
 	private static final int FIRSTCLASS=3;
 	private static final int ECONPLUS=2;
 	private static final int ECONOMYPCLASS=1;
 	
 	public Flight() {
-		this.seats=new LinkedList<LinkedList<Seat>>();
+		this.seats=new ArrayList<ArrayList<Seat>>();
 	}
 	
 	public Flight(String type,String destination, String flightnumber, LocalDateTime departuretimel) {
-		this.seats=new LinkedList<LinkedList<Seat>>();
+		this.seats=new ArrayList<ArrayList<Seat>>();
 		setFlightType(type);
 		setDestination(destination);
 		setDeparturetime(departuretimel);
@@ -71,14 +72,14 @@ public class Flight {
 		return FIRSTCLASS;
 	}
 
-	public LinkedList<LinkedList<Seat>> getSeats() {
+	public ArrayList<ArrayList<Seat>> getSeats() {
 		return seats;
 	}
 
-	public void setSeats(LinkedList<LinkedList<Seat>> seats) {
+	public void setSeats(ArrayList<ArrayList<Seat>> seats) {
 		this.seats = seats;
 	}
-	public void addSeats(LinkedList<Seat> row) {
+	public void addSeats(ArrayList<Seat> row) {
 		seats.add(row);
 	}
 

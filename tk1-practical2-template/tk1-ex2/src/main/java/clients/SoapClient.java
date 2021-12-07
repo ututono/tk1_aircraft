@@ -76,15 +76,32 @@ public class SoapClient implements ClientInterface {
 //		ReservationBookingServiceInterface serverInterface =
 //				service.getPort(ReservationBookingServiceInterface.class);
 		ArrayList<Flight> flights=serverInterface.getallFlights();
-		System.out.println("ReservationBookingServiceImpl");
+		Flight flight=flights.get(2);
+//		LinkedList<LinkedList<Seat>> list= 
+//				serverInterface.getSeatsFromFlight(flight.getFlightnumber());
+//		flight.setSeats(list);
+		fillSeats(flights);
+		System.out.println("[fillSeats3]getFlightfromServer"+flight.toString());
+		
+		return flights;
+	}
+	
+	/**
+	 * Because flight will lose the information about seats when the data
+	 * transmitted via soap. The information will be completed, however,
+	 * when it transmitted itself only. 
+	 * @param flight
+	 */
+	private void fillSeats(ArrayList<Flight> flights) {
 		for (Iterator iterator = flights.iterator(); iterator.hasNext();) {
 			Flight flight = (Flight) iterator.next();
-			System.out.println(flight.toString());
-			
+			ArrayList<ArrayList<Seat>> seats=
+					serverInterface.getSeatsFromFlight(flight.getFlightnumber());
+			flight.setSeats(seats);
 		}
-		System.out.println("**********************************");
-		return serverInterface.getallFlights();
+		
 	}
+	
 
 	@Override
 	public void addtoCart(User user,String flightnum, int rownum, String seatnum) {
@@ -156,16 +173,19 @@ public class SoapClient implements ClientInterface {
 	});
 	}
 	
+	@Override
 	public ArrayList<String> getDestinations() {
 		ReservationBookingServiceInterface serverInterface =
 				service.getPort(ReservationBookingServiceInterface.class);
 		return serverInterface.getDestinations();
 	}
 	
+	@Override
 	public ArrayList<Date> getDates() {
 		return serverInterface.getDates();
 	}
 	
+	@Override
 	public void initCustomerConfigView() {
 		EventQueue.invokeLater(new Runnable() {
 		public void run() {
@@ -190,10 +210,14 @@ public class SoapClient implements ClientInterface {
 					dateBox.addItem(formatDate);
 				}
 				
+				Flight flight=getFlightfromServer().get(0);
+				System.out.println("initCustomerConfigView\n"+flight.getSeats().get(0)
+						+"\nThe size of it "+flight.getSeats().get(0).getClass().getName());
+				
+				
 				// Initialize button
 				JButton next=window.getNextBtn();
 				next.addActionListener(new ActionListener() {
-
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						String des=destinationBox.getSelectedItem().toString();
@@ -216,7 +240,7 @@ public class SoapClient implements ClientInterface {
 		return client;
 	}
 
-	
+	@Override
 	public void initFlightSectView(String destination, Date date) {
 		EventQueue.invokeLater(new Runnable() {
 			
@@ -228,6 +252,7 @@ public class SoapClient implements ClientInterface {
 				DefaultListModel<Flight> listModel=new DefaultListModel<Flight>();
 				ArrayList<Flight> fList=
 						serverInterface.getFlightsOnDayandDest(destination, date);
+				fillSeats(fList);
 				for (Iterator iterator = fList.iterator(); iterator.hasNext();) {
 					Flight flight = (Flight) iterator.next();
 					listModel.addElement(flight);
@@ -266,7 +291,7 @@ public class SoapClient implements ClientInterface {
 		});
 	}
 	
-	
+	@Override
 	public void initSeatBookingView(Flight flight) {
 		EventQueue.invokeLater(new Runnable() {
 
@@ -278,15 +303,12 @@ public class SoapClient implements ClientInterface {
 				Object[] columns={"A","B","C","D","E","F"};
 				DefaultTableModel tableModel=new DefaultTableModel();
 				tableModel.setColumnIdentifiers(columns);
-				
-				System.out.println(flight);
-				LinkedList<LinkedList<Seat>> seats=flight.getSeats();
 
-				for (int i = 0; i < seats.size(); i++) {
-					LinkedList<Seat> row=seats.get(i);
+				for (int i = 0; i < flight.getSeats().size(); i++) {
+					
 					String[] seatrow= {"-","-","-","-","-","-"};
-					for (int j = 0; j < row.size(); j++) {
-						Seat seat=row.get(j);
+					for (int j = 0; j < flight.getSeats().get(i).size(); j++) {
+						Seat seat=flight.getSeats().get(i).get(j);
 						// If seat is non-existence
 						if (!seat.isBlank()) {
 							// If seat is free
@@ -300,11 +322,9 @@ public class SoapClient implements ClientInterface {
 							}
 						}
 					}
-					System.out.println(seatrow);
 					tableModel.addRow(seatrow);
 				}
 				String[] seatrow= {"-","-","-","-","-","-"};
-				System.out.println("the size of seats is "+flight.getSeats().size());
 				tableModel.addRow(seatrow);
 				
 				JTable seatsTable=window.getTable();

@@ -33,6 +33,18 @@ implementation 'jakarta.xml.ws:jakarta.xml.ws-api:2.3.3'
 
 implementation 'org.glassfish.jersey.containers:jersey-container-jdk-http:2.32'
 implementation 'org.glassfish.jersey.bundles:jaxrs-ri:2.32'
+implementation 'org.glassfish.jersey.core:jersey-client:2.32'
+
+}
+
+dependencies {
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.2.0")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.2.0")
+}
+
+dependencies {
+    testCompile("junit:junit:4.12")
+    testRuntime("org.junit.vintage:junit-vintage-engine:5.2.0")
 }
 
 task runServer(type: JavaExec) {

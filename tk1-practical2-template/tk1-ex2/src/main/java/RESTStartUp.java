@@ -8,7 +8,7 @@ import org.glassfish.jersey.server.ResourceConfig;
  
 public class RESTStartUp {
  
-    static final String BASE_URI = "http://localhost:9999/calcrest/";
+    static final String BASE_URI = "http://localhost:8080/server/";
 	private static Logger logger = Logger.getLogger(RESTStartUp.class.getName());
 	
     public static void main(String[] args) {

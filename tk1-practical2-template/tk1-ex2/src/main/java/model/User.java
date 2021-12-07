@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 /**
  * @author ZhuoY
  *
@@ -38,6 +40,25 @@ public class User {
 	public String toString() {
 		return "User [username=" + username + ", age=" + age + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(age, username);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		return age == other.age && Objects.equals(username, other.username);
+	}
+	
+	
 	
 	
 

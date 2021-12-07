@@ -2,7 +2,7 @@ package controllerImpl;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import controllerInterface.FlightsManager;
 import model.Seat;
@@ -27,7 +27,7 @@ public class FlightsmanagerImpl implements FlightsManager {
 			return false;
 		}
 		
-		LinkedList<Seat> row=flight.getSeats().get(rownum);
+		ArrayList<Seat> row=flight.getSeats().get(rownum);
 		Seat seat=findSeatinRow(row, seatnumber);
 		if (seat!=null && seat.isStatus() ) { // the seat is free and not blank
 			// reserve the seat
@@ -48,7 +48,7 @@ public class FlightsmanagerImpl implements FlightsManager {
 	}
 
 
-	private Seat findSeatinRow(LinkedList<Seat> row, String seatnumber) {
+	private Seat findSeatinRow(ArrayList<Seat> row, String seatnumber) {
 		Seat seat=new Seat();
 		for (Iterator iterator = row.iterator(); iterator.hasNext();) {
 			seat = (Seat) iterator.next();
