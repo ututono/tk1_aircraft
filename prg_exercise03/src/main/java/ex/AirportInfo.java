@@ -6,7 +6,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 
 public interface AirportInfo {
-
+    void sparkExample(Dataset<Row> flights);
     /**
      * Task 1
      * Return a dataframe, in which every row contains the destination airport and its count over all available data

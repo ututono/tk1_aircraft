@@ -1,15 +1,16 @@
 package ex;
 
 import ex.deserialization.objects.Flight;
+import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
 import scala.Tuple2;
 
-import static org.apache.spark.sql.functions.col;
-import static org.apache.spark.sql.functions.explode;
+import static org.apache.spark.sql.functions.*;
 
 public class AirportInfoImpl implements AirportInfo {
 
@@ -41,8 +42,12 @@ public class AirportInfoImpl implements AirportInfo {
 
         System.out.println("Example mapToPair and reduceByKey");
         JavaRDD<Row> rdd = selectOnlyLufthansa.toJavaRDD();
+        System.out.println(rdd.first().toString());
         JavaPairRDD<String, Long> paired = rdd.mapToPair(r -> Tuple2.apply(r.getString(1), 1L));
+        System.out.println("Visual inspection of paired : ");
+        paired.take(20).forEach(t-> System.out.println(t._1()+" "+t._2()));
         JavaPairRDD<String, Long> reducedByKey = paired.reduceByKey((a, b) -> a + b);
+        System.out.println("Visual inspection of reducedByKey : ");
         reducedByKey.take(20).forEach(t -> System.out.println(t._1() + " " + t._2()));
     }
 
@@ -60,8 +65,18 @@ public class AirportInfoImpl implements AirportInfo {
      */
     @Override
     public Dataset<Row> mostCommonDestinations(Dataset<Row> departingFlights) {
-        // TODO: Implement
-        return null;
+
+        // creat a sparkSession
+        SparkConf sparkConf=new SparkConf().setAppName("SparkExample").setMaster("local");
+        SparkSession session=SparkSession.builder().config(sparkConf).getOrCreate();
+
+        departingFlights.printSchema();
+        Dataset<Row> datasetSelAirport=departingFlights.select("flight.departureAirport").filter(r->!r.anyNull());
+        Dataset<Row> datasetGBAirport=datasetSelAirport.groupBy("departureAirport").count();
+        Dataset<Row> datasetOBDec=datasetGBAirport.orderBy( col("count").desc());
+        datasetOBDec.show();
+        return datasetOBDec;
+
     }
 
     /**
@@ -78,8 +93,16 @@ public class AirportInfoImpl implements AirportInfo {
      */
     @Override
     public Dataset<Row> gatesWithFlightsToBerlin(Dataset<Row> departureFlights) {
-        // TODO: Implement
-        return null;
+        // In 2018, there are 2 airports which in operation in Berlin, one is Berlin Tegel Airport "Otto Lilienthal"
+        // which abbreviated TXL, another is SXF aka Berlin Schönefeld Airport.
+        Dataset<Row> dataset=departureFlights.where("flight.arrivalAirport='TXL' or flight.arrivalAirport='SXF'")
+                .select("flight.departure.gates.gate")
+                .where("gate IS NOT NULL and size(gate)>0");
+        Dataset<Row> result=dataset.groupBy("gate").count().orderBy(col("count").desc()).where("count > 0");
+
+        // convert ArrayType to String
+        result=result.withColumn("gate",concat_ws(",",col("gate")));
+        return result;
     }
 
     /**
@@ -98,7 +121,20 @@ public class AirportInfoImpl implements AirportInfo {
     @Override
     public JavaPairRDD<String, Long> aircraftCountOnDate(Dataset<Row> flights, String originDate) {
         // TODO: Implement
-        return null;
+
+        flights.printSchema();
+        String sql="flight.originDate = '" +originDate+"'";
+        Dataset<Row> selectModelName=flights.where(sql).select("flight.aircraftType.modelName").filter(r->!r.anyNull());
+        selectModelName.show(false);
+
+        JavaRDD<Row> rdd = selectModelName.toJavaRDD();
+        JavaPairRDD<String, Long> paired = rdd.mapToPair(r -> Tuple2.apply(r.getString(0), 1L));
+        JavaPairRDD<String, Long> reducedByKey = paired.reduceByKey((a, b) -> a + b);
+        reducedByKey.take(20).forEach(t -> System.out.println(t._1() + " " + t._2()));
+
+
+        return reducedByKey;
+
     }
 
     /**
