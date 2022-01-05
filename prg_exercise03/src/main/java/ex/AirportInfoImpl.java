@@ -10,6 +10,10 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import scala.Tuple2;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 import static org.apache.spark.sql.functions.*;
 
 public class AirportInfoImpl implements AirportInfo {
@@ -71,8 +75,8 @@ public class AirportInfoImpl implements AirportInfo {
         SparkSession session=SparkSession.builder().config(sparkConf).getOrCreate();
 
         departingFlights.printSchema();
-        Dataset<Row> datasetSelAirport=departingFlights.select("flight.departureAirport").filter(r->!r.anyNull());
-        Dataset<Row> datasetGBAirport=datasetSelAirport.groupBy("departureAirport").count();
+        Dataset<Row> datasetSelAirport=departingFlights.select("flight.arrivalAirport").filter(r->!r.anyNull());
+        Dataset<Row> datasetGBAirport=datasetSelAirport.groupBy("arrivalAirport").count();
         Dataset<Row> datasetOBDec=datasetGBAirport.orderBy( col("count").desc());
         datasetOBDec.show();
         return datasetOBDec;
@@ -102,6 +106,7 @@ public class AirportInfoImpl implements AirportInfo {
 
         // convert ArrayType to String
         result=result.withColumn("gate",concat_ws(",",col("gate")));
+        result.show();
         return result;
     }
 
@@ -120,7 +125,6 @@ public class AirportInfoImpl implements AirportInfo {
      */
     @Override
     public JavaPairRDD<String, Long> aircraftCountOnDate(Dataset<Row> flights, String originDate) {
-        // TODO: Implement
 
         flights.printSchema();
         String sql="flight.originDate = '" +originDate+"'";
@@ -136,7 +140,7 @@ public class AirportInfoImpl implements AirportInfo {
         return reducedByKey;
 
     }
-
+    ArrayList<String> datelist;
     /**
      * Task 4
      * Returns the date string of the day at which Ryanair had a strike in the given Dataframe.
@@ -148,8 +152,85 @@ public class AirportInfoImpl implements AirportInfo {
      */
     @Override
     public String ryanairStrike(Dataset<Row> flights) {
-        // TODO: Implement
-        return null;
+        String start="2018-08-08";
+        String end="2018-09-12";
+        datelist=new ArrayList<>();
+        flights.printSchema();
+
+        Dataset<Row> dataset=flights.where("flight.operatingAirline.name='Ryanair'").select("flight.departure.actual")
+                .filter(r->!r.anyNull()).orderBy(col("actual"));
+        JavaRDD<Row> rdd = dataset.toJavaRDD();
+        JavaPairRDD<String, Long> paired = rdd.mapToPair(r -> Tuple2.apply(r.getString(0), 1L));
+        paired.take((int)paired.count()).forEach(t-> datelist.add(t._1()));
+
+        for (int i = 0; i < datelist.size(); i++) {
+            String strdate=datelist.get(i);
+            datelist.set(i,strdate.substring(0,strdate.indexOf("T")));
+        }
+        datelist=removeDuplicates(datelist);
+
+        datelist.forEach(r-> System.out.println(r));
+
+        ArrayList<String> result=new ArrayList<>();
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date datestart=sdf.parse(start);
+            Date date=null;
+            for (int i = 0; i < datelist.size(); i++) {
+                if (i==0){
+                    date=datestart;
+                }
+                Date tmp=sdf.parse(datelist.get(i));
+                if (!isSameDay(tmp,date)){
+                    result.add(sdf.format(date));
+                    i-=1;
+                }
+                Calendar c = Calendar.getInstance();
+                c.setTime(date);
+                c.add(Calendar.DATE, 1);  // number of days to add
+                date = sdf.parse(sdf.format(c.getTime()));  // dt is now the new date
+
+
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("result is : "+result.get(0));
+        System.out.println("We have "+result.size()+" results");
+
+        return result.get(0);
+    }
+
+    private static boolean isSameDay(Date date1, Date date2) {
+        Calendar calendar1 = Calendar.getInstance();
+        calendar1.setTime(date1);
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.setTime(date2);
+        return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR)
+                && calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH)
+                && calendar1.get(Calendar.DAY_OF_MONTH) == calendar2.get(Calendar.DAY_OF_MONTH);
+    }
+
+    // Function to remove duplicates from an ArrayList
+    private static <T> ArrayList<T> removeDuplicates(ArrayList<T> list)
+    {
+
+        // Create a new LinkedHashSet
+        Set<T> set = new LinkedHashSet<>();
+
+        // Add the elements to set
+        set.addAll(list);
+
+        // Clear the list
+        list.clear();
+
+        // add the elements of set
+        // with no duplicates to the list
+        list.addAll(set);
+
+        // return the list
+        return list;
     }
 
     /**

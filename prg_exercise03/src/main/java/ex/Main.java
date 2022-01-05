@@ -10,25 +10,34 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import scala.Tuple2;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class Main {
 
     private static final String DEPARTURES = "./Fraport/*DEPARTURES*";
     private static final String ARRIVALS = "./Fraport/*ARRIVALS*";
     private static final String ALL_FLIGHTS = "./Fraport/";
 
-    public static void main(String... args) {
-        // comment out to enable log messages
-        Logger.getLogger("org").setLevel(Level.ERROR);
-        Logger.getLogger("akka").setLevel(Level.ERROR);
+//    public static void main(String... args) {
+//        // comment out to enable log messages
+//        Logger.getLogger("org").setLevel(Level.ERROR);
+//        Logger.getLogger("akka").setLevel(Level.ERROR);
+//
+//        AirportInfoImpl airportInfo = new AirportInfoImpl();
+//        FlightParser flightParser = new FlightParserImpl();
+//
+//        exampleOutput(airportInfo, flightParser);
+//    }
+//
+//    private static void exampleOutput(AirportInfoImpl airportInfo, FlightParser flightParser) {
+//        Dataset<Row> firstDay = flightParser.parseRows("./Fraport/*-08-08-*");
+//        airportInfo.sparkExample(firstDay);
+//    }
 
-        AirportInfoImpl airportInfo = new AirportInfoImpl();
-        FlightParser flightParser = new FlightParserImpl();
-
-        exampleOutput(airportInfo, flightParser);
-    }
-
-    private static void exampleOutput(AirportInfoImpl airportInfo, FlightParser flightParser) {
-        Dataset<Row> firstDay = flightParser.parseRows("./Fraport/*-08-08-*");
-        airportInfo.sparkExample(firstDay);
+    public static void main(String[] args) {
+        String strdate="2018-08-08T05:02:46Z";
+        LocalDateTime dateTime= LocalDateTime.parse(strdate);
+        System.out.println(dateTime);
     }
 }
