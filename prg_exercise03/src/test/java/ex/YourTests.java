@@ -2,9 +2,11 @@ package ex;
 
 import ex.deserialization.FlightParser;
 import ex.deserialization.FlightParserImpl;
+import ex.deserialization.objects.Flight;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.junit.jupiter.api.*;
 
@@ -65,20 +67,49 @@ public class YourTests {
     }
 
     @Nested
-    @DisplayName("Task 6")
+    @DisplayName("Task 5")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    class MyTest23 {
+    class MyTestForTask5 {
 
         String result;
+        Dataset<Flight> flightDataset;
 
+        @BeforeAll
+        @Timeout(30)
+        void setup() {
+            flightDataset=fput.parseFlights(FLIGHTS_PATH);
+            uut.flightsOfAirlineWithStatus(flightDataset,"DE","S","X");
+        }
 
         @Test
         @DisplayName("Check format of return")
         void formatTest() {
-            String strdate="2018-08-08T05:02:46Z";
-            String newstr=strdate.substring(0,strdate.indexOf("T"));
-            System.out.println(strdate.indexOf("T"));
-            System.out.println(newstr);
+            Assertions.assertTrue(true);
+        }
+
+    }
+
+    @Nested
+    @DisplayName("Task 6")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class MyTestForTask6 {
+
+        String result;
+        Dataset<Flight> flightDataset;
+
+        @BeforeAll
+        @Timeout(30)
+        void setup() {
+            flightDataset=fput.parseFlights(FLIGHTS_PATH);
+            String lowerlimit="12:00:00";
+            String upperlimit="18:30:00";
+            uut.avgNumberOfFlightsInWindow(flightDataset,lowerlimit,upperlimit);
+        }
+
+        @Test
+        @DisplayName("Check format of return")
+        void formatTest() {
+            Assertions.assertTrue(true);
         }
 
     }

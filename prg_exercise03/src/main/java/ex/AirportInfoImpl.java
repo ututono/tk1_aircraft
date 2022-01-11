@@ -152,54 +152,79 @@ public class AirportInfoImpl implements AirportInfo {
      */
     @Override
     public String ryanairStrike(Dataset<Row> flights) {
-        String start="2018-08-08";
-        String end="2018-09-12";
-        datelist=new ArrayList<>();
-        flights.printSchema();
+//
+//        String start="2018-08-08";
+//        String end="2018-09-12";
+//        datelist=new ArrayList<>();
+//        flights.printSchema();
+//
+//        Dataset<Row> dataset=flights.where("flight.operatingAirline.name='Ryanair'").select("flight.departure.actual")
+//                .filter(r->!r.anyNull()).orderBy(col("actual"));
+//        JavaRDD<Row> rdd = dataset.toJavaRDD();
+//        JavaPairRDD<String, Long> paired = rdd.mapToPair(r -> Tuple2.apply(r.getString(0), 1L));
+//        paired.take((int)paired.count()).forEach(t-> datelist.add(t._1()));
+//
+//        for (int i = 0; i < datelist.size(); i++) {
+//            String strdate=datelist.get(i);
+//            datelist.set(i,strdate.substring(0,strdate.indexOf("T")));
+//        }
+//        datelist=removeDuplicates(datelist);
+//
+//        datelist.forEach(r-> System.out.println(r));
+//
+//        ArrayList<String> result=new ArrayList<>();
+//        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+//        try {
+//            Date datestart=sdf.parse(start);
+//            Date date=null;
+//            for (int i = 0; i < datelist.size(); i++) {
+//                if (i==0){
+//                    date=datestart;
+//                }
+//                Date tmp=sdf.parse(datelist.get(i));
+//                if (!isSameDay(tmp,date)){
+//                    result.add(sdf.format(date));
+//                    i-=1;
+//                }
+//                Calendar c = Calendar.getInstance();
+//                c.setTime(date);
+//                c.add(Calendar.DATE, 1);  // number of days to add
+//                date = sdf.parse(sdf.format(c.getTime()));  // dt is now the new date
+//
+//
+//            }
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//
+//        System.out.println("result is : "+result.get(0));
+//        System.out.println("We have "+result.size()+" results");
+//
+//        return result.get(0);
+//
 
-        Dataset<Row> dataset=flights.where("flight.operatingAirline.name='Ryanair'").select("flight.departure.actual")
-                .filter(r->!r.anyNull()).orderBy(col("actual"));
-        JavaRDD<Row> rdd = dataset.toJavaRDD();
+
+        datelist=new ArrayList<>();
+        Dataset<Row> selectScheduledDateOnStatus=flights.where("flight.operatingAirline.name='Ryanair'").where("flight.flightStatus='X' or flight.flightStatus='S'")
+                .select("flight.arrival.scheduled").orderBy(col("scheduled")).filter(r->!r.anyNull());
+        JavaRDD<Row> rdd = selectScheduledDateOnStatus.toJavaRDD();
         JavaPairRDD<String, Long> paired = rdd.mapToPair(r -> Tuple2.apply(r.getString(0), 1L));
         paired.take((int)paired.count()).forEach(t-> datelist.add(t._1()));
-
         for (int i = 0; i < datelist.size(); i++) {
             String strdate=datelist.get(i);
             datelist.set(i,strdate.substring(0,strdate.indexOf("T")));
         }
-        datelist=removeDuplicates(datelist);
 
-        datelist.forEach(r-> System.out.println(r));
+        SparkSession spark = SparkSession.builder().
+                appName("documentation").master("local").getOrCreate();
+        spark.sparkContext().setLogLevel("ERROR");
 
-        ArrayList<String> result=new ArrayList<>();
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            Date datestart=sdf.parse(start);
-            Date date=null;
-            for (int i = 0; i < datelist.size(); i++) {
-                if (i==0){
-                    date=datestart;
-                }
-                Date tmp=sdf.parse(datelist.get(i));
-                if (!isSameDay(tmp,date)){
-                    result.add(sdf.format(date));
-                    i-=1;
-                }
-                Calendar c = Calendar.getInstance();
-                c.setTime(date);
-                c.add(Calendar.DATE, 1);  // number of days to add
-                date = sdf.parse(sdf.format(c.getTime()));  // dt is now the new date
+        Dataset<String> dateDS=spark.createDataset(datelist,Encoders.STRING());
+        Dataset<Row> dateCountDS=dateDS.groupBy("value").count().orderBy(col("count").desc());
+        dateCountDS.show();
+        List result=dateCountDS.select("value").collectAsList();
+        return result.get(0).toString();
 
-
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("result is : "+result.get(0));
-        System.out.println("We have "+result.size()+" results");
-
-        return result.get(0);
     }
 
     private static boolean isSameDay(Date date1, Date date2) {
@@ -246,8 +271,28 @@ public class AirportInfoImpl implements AirportInfo {
      */
     @Override
     public Dataset<Flight> flightsOfAirlineWithStatus(Dataset<Flight> flights, String airlineDisplayCode, String status1, String... status) {
-        // TODO: Implement
-        return null;
+        flights.printSchema();
+        String displaycodeSQL="airlineDisplayCode='"+airlineDisplayCode+"'";
+
+        String statusSQL="flightStatus= '"+status1+"'";
+        for (String code:status
+             ) {
+            if (!code.isEmpty()){
+                statusSQL+=" or flightStatus= '"+code+"'";
+            }
+        }
+        System.out.println(statusSQL);
+        Dataset<Flight> result= flights.where(displaycodeSQL).where(statusSQL);
+        result.select("airlineDisplayCode",
+                "arrivalAirport",
+                "departureAirport",
+                "flightStatus",
+                "originDate",
+                "scheduled"
+//                "scheduledTime"
+                ).show();
+//        result.select("arrivalAirport","departureAirport").show();
+        return result;
     }
 
     /**
@@ -266,6 +311,18 @@ public class AirportInfoImpl implements AirportInfo {
     @Override
     public double avgNumberOfFlightsInWindow(Dataset<Flight> flights, String lowerLimit, String upperLimit) {
         // TODO: Implement
+        String scheduledTime="scheduled";
+        Dataset<Row> dataset=flights.select("airlineDisplayCode",
+                "arrivalAirport",
+                "departureAirport",
+                "flightStatus",
+                "originDate",
+                "scheduled");
+        System.out.println(dataset.count());
+        dataset.groupBy("originDate").count().show();
+
+
+
         return 0.0d;
     }
 

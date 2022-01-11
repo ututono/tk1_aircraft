@@ -5,10 +5,12 @@ import com.google.gson.GsonBuilder;
 import ex.deserialization.objects.Flight;
 import ex.deserialization.objects.FlightObj;
 import org.apache.spark.SparkConf;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoders;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
+import org.apache.spark.api.java.function.MapPartitionsFunction;
+import org.apache.spark.sql.*;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class FlightParserImpl implements FlightParser {
 
@@ -42,6 +44,34 @@ public class FlightParserImpl implements FlightParser {
     @Override
     public Dataset<Flight> parseFlights(String path) {
         Dataset<String> lines = sparkSession.sqlContext().read().textFile(path);
-        return null;
+
+        // create a GsonBuilder which force serialization of null value registering a typeAdapter
+        Gson gs=new GsonBuilder().registerTypeAdapter(FlightObj.class,new FlightAdapter()).serializeNulls().create();
+
+        FlightAdapter flightAdapter=new FlightAdapter();
+//        Dataset<Flight> flightDataset = lines.mapPartitions((MapPartitionsFunction<String, Flight>) input -> {
+//            ArrayList<Flight> flights=new ArrayList<>();
+//            while (input.hasNext()) {
+////                    FlightObj flightObj=gs.fromJson(input.next(),FlightObj.class);
+////                    flights.add(flightObj.getFlight());
+//                flights.add(new Flight());
+//            }
+//            return flights.iterator();
+//        },Encoders.bean(Flight.class));
+
+        List<String> jsonStringlist;
+        ArrayList<Flight> flightsList=new ArrayList<>();
+        jsonStringlist=lines.collectAsList();
+
+        for (String jsonStr: jsonStringlist
+             ) {
+            FlightObj flightObj=gs.fromJson(jsonStr,FlightObj.class);
+            flightsList.add(flightObj.getFlight());
+        };
+        SparkConf conf = new SparkConf().setAppName("SparkExercise").setMaster("local");
+        sparkSession = SparkSession.builder().config(conf).getOrCreate();
+        Dataset<Flight> flightDataset=sparkSession.createDataset(flightsList,Encoders.bean(Flight.class));
+        flightDataset.printSchema();
+        return flightDataset;
     }
 }
