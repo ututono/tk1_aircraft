@@ -10,8 +10,6 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import scala.Tuple2;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.apache.spark.sql.functions.*;
@@ -152,7 +150,7 @@ public class AirportInfoImpl implements AirportInfo {
      */
     @Override
     public String ryanairStrike(Dataset<Row> flights) {
-//
+            /* The annotated code is used to look up a strik based on a day when there are no flight departure actually */
 //        String start="2018-08-08";
 //        String end="2018-09-12";
 //        datelist=new ArrayList<>();
@@ -312,20 +310,40 @@ public class AirportInfoImpl implements AirportInfo {
     public double avgNumberOfFlightsInWindow(Dataset<Flight> flights, String lowerLimit, String upperLimit) {
         // TODO: Implement
         String scheduledTime="scheduled";
-        Dataset<Row> dataset=flights.select("airlineDisplayCode",
-                "arrivalAirport",
-                "departureAirport",
-                "flightStatus",
-                "originDate",
-                "scheduled");
-        System.out.println(dataset.count());
-        dataset.groupBy("originDate").count().show();
+        Dataset<Row> tmp=flights.groupBy("originDate").count().select("originDate");
+        long period=tmp.count();
+        long result= (long) 0.0d;
+        List<Flight> flightsList=new ArrayList<>();
+        ArrayList<Flight> selectedFlghts=new ArrayList<>();
+
+        flightsList=flights.collectAsList();
+
+        if (flightsList.size()>0) {
+            flightsList.forEach(r->{
+                if (!r.getScheduled().isEmpty()){
+                    if (isBefore(lowerLimit,getScheduledTime(r.getScheduled()))
+                            && isBefore(getScheduledTime(r.getScheduled()),upperLimit)) {
+                        selectedFlghts.add(r);
+                    }
+                }
+            });
+        }else {
+            System.out.println("There are " +flightsList.size()+" flights in List");
+        }
 
 
+        System.out.println("There are "+ selectedFlghts.size()+" selected flights in the period of "+period+" days");
 
-        return 0.0d;
+        result=Math.floorDiv((long)selectedFlghts.size(),period);
+        System.out.println("the average number of flights per day is: "+result);
+        return result;
     }
 
+    public String getScheduledTime(String scheduled) {
+        if (scheduled == null || scheduled.isEmpty()) return "";
+
+        return scheduled.substring(11, 19);
+    }
     /**
      * Returns true if the first timestamp is before or equal to the second timestamp. Both timestamps must match
      * the format 'hh:mm:ss'.

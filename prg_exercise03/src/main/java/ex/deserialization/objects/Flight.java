@@ -36,11 +36,11 @@ public class Flight implements Serializable {
         return flightStatus;
     }
 
-    public String getScheduledTime() {
-        if (scheduled == null || scheduled.isEmpty()) return "";
-
-        return scheduled.substring(11, 19);
-    }
+//    public String getScheduledTime() {
+//        if (scheduled == null || scheduled.isEmpty()) return "";
+//
+//        return scheduled.substring(11, 19);
+//    }
 
     public String getScheduled() {
         if (scheduled == null) return "";
