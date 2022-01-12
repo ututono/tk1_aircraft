@@ -115,6 +115,5 @@ public class YourTests {
             isValidResult=flightDataset.count()>result?true:false;
             Assertions.assertTrue(isValidResult);
         }
-
     }
 }
