@@ -73,18 +73,20 @@ public class YourTests {
 
         String result;
         Dataset<Flight> flightDataset;
+        Dataset<Flight> flightsresult;
 
         @BeforeAll
         @Timeout(30)
         void setup() {
             flightDataset=fput.parseFlights(FLIGHTS_PATH);
-            uut.flightsOfAirlineWithStatus(flightDataset,"DE","S","X");
+            flightsresult=uut.flightsOfAirlineWithStatus(flightDataset,"DE","S","X");
         }
 
         @Test
         @DisplayName("Check format of return")
         void formatTest() {
-            Assertions.assertTrue(true);
+            boolean isNotNull=flightsresult.count()>0?true:false;
+            Assertions.assertTrue(isNotNull);
         }
 
     }
@@ -94,8 +96,8 @@ public class YourTests {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class MyTestForTask6 {
 
-        String result;
         Dataset<Flight> flightDataset;
+        double result;
 
         @BeforeAll
         @Timeout(30)
@@ -103,13 +105,15 @@ public class YourTests {
             flightDataset=fput.parseFlights(FLIGHTS_PATH);
             String lowerlimit="12:00:00";
             String upperlimit="18:30:00";
-            uut.avgNumberOfFlightsInWindow(flightDataset,lowerlimit,upperlimit);
+            result=uut.avgNumberOfFlightsInWindow(flightDataset,lowerlimit,upperlimit);
         }
 
         @Test
         @DisplayName("Check format of return")
         void formatTest() {
-            Assertions.assertTrue(true);
+            boolean isValidResult=(result>0)?true:false;
+            isValidResult=flightDataset.count()>result?true:false;
+            Assertions.assertTrue(isValidResult);
         }
 
     }

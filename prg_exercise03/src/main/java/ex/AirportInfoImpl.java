@@ -308,7 +308,6 @@ public class AirportInfoImpl implements AirportInfo {
      */
     @Override
     public double avgNumberOfFlightsInWindow(Dataset<Flight> flights, String lowerLimit, String upperLimit) {
-        // TODO: Implement
         String scheduledTime="scheduled";
         Dataset<Row> tmp=flights.groupBy("originDate").count().select("originDate");
         long period=tmp.count();
@@ -336,7 +335,7 @@ public class AirportInfoImpl implements AirportInfo {
 
         result=Math.floorDiv((long)selectedFlghts.size(),period);
         System.out.println("the average number of flights per day is: "+result);
-        return result;
+        return (double) result;
     }
 
     public String getScheduledTime(String scheduled) {
