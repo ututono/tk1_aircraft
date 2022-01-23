@@ -9,6 +9,7 @@ public class TimeServer {
 	private static int PORT = 27780;
 	private ServerSocket serverSocket;
 	private Socket socket;
+	private static Integer OFFSET=1100; // Artificial offset for the server
 
 	public TimeServer() {
 		try {
@@ -80,9 +81,10 @@ public class TimeServer {
 			ObjectInputStream objectInputStream=new ObjectInputStream(input);
 			ObjectOutputStream objectOutputStream=new ObjectOutputStream(client.getOutputStream());
 			NTPRequest ntpRequest= (NTPRequest) objectInputStream.readObject();
-			ntpRequest.setT3(Instant.now().toEpochMilli());
-			threadSleep(1000);
-			ntpRequest.setT2(Instant.now().toEpochMilli());
+			ntpRequest.setT3(Instant.now().toEpochMilli()+OFFSET);
+			threadSleep(500); // Simulate processing time
+			ntpRequest.setT2(Instant.now().toEpochMilli()+OFFSET);
+
 			objectOutputStream.writeObject(ntpRequest);
 
 		}

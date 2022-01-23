@@ -4,6 +4,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -20,6 +22,7 @@ public class TimeClient {
 
 			for (int i = 0; i < 10; i++) {
 				socket = new Socket(InetAddress.getByName(hostUrl), PORT);
+				System.out.println("\nClient "+socket.getLocalSocketAddress()+" is going to connect server");
 				try(InputStream input=socket.getInputStream()){
 					try(OutputStream output=socket.getOutputStream()){
 						handle(input,output);
@@ -50,27 +53,39 @@ public class TimeClient {
 		ObjectInputStream objectInputStream=new ObjectInputStream(input);
 		long t4=Instant.now().toEpochMilli();
 		ntpRequest.setT4(t4);
-		threadSleep(randomGen.nextInt(50)+50); // Randomly generate a integer in range of [50,100]
+
+		// Simulate transport delay
+		Integer delay=randomGen.nextInt(50)+50;
+		System.out.println("Artificial delay: "+delay);
+
+		threadSleep(delay); // Randomly generate an integer in range of [50,100]
 		objOutput.writeObject(ntpRequest);
 
-		threadSleep(randomGen.nextInt(50)+50);
 		NTPRequest ntpResponse= (NTPRequest) objectInputStream.readObject();
+		threadSleep(delay);
 		ntpResponse.setT1(Instant.now().toEpochMilli());
 
+		// Visual inspection
+		LocalDateTime t4_sendReq =
+				LocalDateTime.ofInstant(Instant.ofEpochMilli(ntpResponse.getT4()), ZoneId.systemDefault());
+		LocalDateTime t3_RcReq =
+				LocalDateTime.ofInstant(Instant.ofEpochMilli(ntpResponse.getT3()), ZoneId.systemDefault());
+		LocalDateTime t2_sendReponse =
+				LocalDateTime.ofInstant(Instant.ofEpochMilli(ntpResponse.getT2()), ZoneId.systemDefault());
+		LocalDateTime t1_RecReponse =
+				LocalDateTime.ofInstant(Instant.ofEpochMilli(ntpResponse.getT1()), ZoneId.systemDefault());
+		System.out.println("T4_sendReq:"+t4_sendReq);
+		System.out.println("t3_RcReq:"+t3_RcReq);
+		System.out.println("t2_sendReponse:"+t2_sendReponse);
+		System.out.println("t1_RecReponse:"+t1_RecReponse);
+
 		ntpResponse.calculateOandD();
-		System.out.println(ntpResponse);
 		System.out.println("d is :"+ntpResponse.d+"\t o is: "+ntpResponse.o);
 
 
 	}
 
 	private void sendNTPRequest(NTPRequest request) throws IOException {
-		try (OutputStream output=socket.getOutputStream()){
-			ObjectOutputStream objectOutputStream=new ObjectOutputStream(output);
-			objectOutputStream.writeObject(request);
-
-		}
-
 	}
 
 	private void threadSleep(long millis) {
